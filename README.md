@@ -1,7 +1,9 @@
 # IP-Finder
 🌐know your live ip address...
-URL 
+---
+#URL 
 https://xzerocode.github.io/IP_Finder/
+---
 "User-made for users."
 
 ♻️simpe...
@@ -10,11 +12,11 @@ https://xzerocode.github.io/IP_Finder/
 
 ---
 
-🌐 Accurate IP Finder
+#🌐 Accurate IP Finder
 
 Find your public IPv4 / IPv6 and location info using free APIs.
 
-Features
+#Features
 
 Detects IPv4 & IPv6
 
@@ -25,9 +27,8 @@ Copy button for each IP
 Refresh with loading effect
 
 Clean responsive design
-
-
-Usage
+---
+#Usage
 
 Open index.html, click Show IPv4 / IPv6, then Refresh Now.
 
