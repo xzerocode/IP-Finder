@@ -2,7 +2,7 @@
 🌐know your live ip address...
 ---
 URL 
-https://xzerocode.github.io/IP_Finder/
+https://xzerocode.github.io/IP-Finder/
 -
 # "User-made for users."
 ---
