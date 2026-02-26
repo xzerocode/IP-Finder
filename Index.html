@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>𝙸𝙿 𝙵𝚒𝚗𝚍𝚎𝚛 | Accurate IP Finder</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/25/25694.png" type="image/png">
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: #111;
+      background: #f4f6fb;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 10px 120px;
+    }
+    .container {
+      width: min(720px, 95vw);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* --- Header --- */
+    #site-header {
+      text-align: center;
+      background: #fff;
+      border-radius: 0;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      padding: 16px;
+    }
+    #site-header h1 { margin: 0; font-size: 26px; font-weight: 700; }
+    #site-header h2 { margin: 6px 0 0; font-size: 15px; color: #555; }
+
+    /* --- Card --- */
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 0;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    .muted { color: #555; font-size: 13px; margin-bottom: 10px; }
+
+    .box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 0;
+      margin-top: 10px;
+      border: 1px solid #ddd;
+    }
+    .big { font-weight: 700; font-size: 20px; }
+
+    /* --- IPv4 red pulsing dot --- */
+    .ipv4-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+    .dot {
+      position: relative;
+      width: 10px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+    }
+    .dot::before,
+    .dot::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 0, 0, 0.4);
+      transform: translate(-50%, -50%) scale(1);
+      animation: pulse 1.8s infinite;
+    }
+    .dot::after {
+      animation-delay: 0.6s;
+    }
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.8;
+      }
+      70% {
+        transform: translate(-50%, -50%) scale(2.8);
+        opacity: 0;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* --- IPv6 scroll and copy --- */
+    #ip-display,
+    #ip6-display {
+      overflow-x: auto;
+      white-space: nowrap;
+      background: #eef2f7;
+      padding: 8px;
+      font-family: monospace;
+      user-select: all;
+      border-radius: 0;
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid #555;
+      color: #111;
+      border-radius: 0;
+      padding: 4px 8px;
+      font-size: 13px;
+      margin-left: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .copy-btn:hover { background: #f3f3f3; }
+
+    /* --- Location --- */
+    #top-geo {
+      text-align: center;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    pre { white-space: pre-wrap; word-break: break-word; font-size: 13px; }
+
+    /* --- Buttons --- */
+    button { cursor: pointer; border: none; }
+    #refresh {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      background:#d96f13;
+      color: #000000;
+      border-radius: 0;
+      font-weight: 600;
+      font-size: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: all 0.25s ease;
+    }
+    #refresh:hover { background: #848484; color: #000000; transform: translateX(-50%) scale(1.05); }
+
+    .toggle-ip {
+      margin-top: 10px;
+      background: #f0f0f0;
+      border: 1px solid #aaa;
+      padding: 6px 10px;
+      border-radius: 0;
+      font-weight: 600;
+    }
+
+    #toggleRaw {
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 0;
+      border: 1px solid #999;
+      background: #f8f8f8;
+    }
+
+    @media (max-width: 600px) {
+      #site-header h1 { font-size: 22px; }
+      .big { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div id="site-header">
+      <h1>𝙸𝙿 𝙵𝚒𝚗𝚍𝚎𝚛</h1>
+      <h2>Accurate ɪᴘ & Geo ꜰɪɴᴅᴇʀ</h2>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card" role="region" aria-label="IP Finder">
+      <div class="muted">Uses multiple APIs to verify and provide details. Detects only public IP.</div>
+
+      <!-- IPv4 Section -->
+      <button id="toggleIPv4" class="toggle-ip">Show IPv4</button>
+      <div id="ipv4-section" class="box" style="display:none;">
+        <div class="ipv4-title"><div class="dot"></div>Detected IPv4</div>
+        <div style="display:flex; align-items:center;">
+          <div id="ip-display" class="big" style="flex:1;">—</div>
+          <button class="copy-btn" id="copyIPv4">Copy</button>
+        </div>
+        <div id="ip-source" class="muted">source: —</div>
+      </div>
+
+      <!-- IPv6 Section -->
+      <button id="toggleIPv6" class="toggle-ip">Show IPv6</button>
+      <div id="ipv6-section" class="box" style="display:none;">
+        <div><b>IPv6</b></div>
+        <div style="display:flex; align-items:center;">
+          <div id="ip6-display" class="big" style="flex:1;">—</div>
+          <button class="copy-btn" id="copyIPv6">Copy</button>
+        </div>
+        <div id="ip6-source" class="muted">source: —</div>
+      </div>
+
+      <!-- Location -->
+      <div id="location-section" class="box">
+        <div style="font-weight:700;margin-bottom:8px;">Location Details</div>
+        <div id="top-geo"><b>City:</b> — <br><b>Region:</b> — <br><b>Country:</b> —</div>
+        <pre id="geo" style="margin-top:8px;">—</pre>
+      </div>
+
+      <button id="toggleRaw">Show Raw Data</button>
+      <div id="rawBox" class="box" style="display:none;margin-top:12px;">
+        <div><b>Raw responses (for debugging)</b></div>
+        <pre id="raw">—</pre>
+      </div>
+
+      <div class="muted">APIs: api.ipify.org, ipapi.co, ipinfo.io</div>
+    </div>
+  </div>
+
+  <button id="refresh">Refresh Now</button>
+
+  <script>
+    const ipEl = document.getElementById('ip-display');
+    const ipSourceEl = document.getElementById('ip-source');
+    const ip6El = document.getElementById('ip6-display');
+    const ip6SourceEl = document.getElementById('ip6-source');
+    const geoEl = document.getElementById('geo');
+    const topGeoEl = document.getElementById('top-geo');
+    const rawEl = document.getElementById('raw');
+    const rawBox = document.getElementById('rawBox');
+    const btn = document.getElementById('refresh');
+    const toggleRaw = document.getElementById('toggleRaw');
+    const toggleIPv4 = document.getElementById('toggleIPv4');
+    const toggleIPv6 = document.getElementById('toggleIPv6');
+    const ipv4Section = document.getElementById('ipv4-section');
+    const ipv6Section = document.getElementById('ipv6-section');
+    const copyIPv4 = document.getElementById('copyIPv4');
+    const copyIPv6 = document.getElementById('copyIPv6');
+
+    async function fetchWithTimeout(url, opts = {}, ms = 6000) {
+      return new Promise((res, rej) => {
+        const timer = setTimeout(() => rej(new Error('timeout')), ms);
+        fetch(url, opts).then(r => { clearTimeout(timer); res(r); }).catch(e => { clearTimeout(timer); rej(e); });
+      });
+    }
+
+    async function getIPv4() {
+      try {
+        const r = await fetchWithTimeout('https://api.ipify.org?format=json', {}, 5000);
+        if (!r.ok) throw new Error();
+        const j = await r.json();
+        return { ip: j.ip, source: 'api.ipify.org' };
+      } catch {
+        try {
+          const r2 = await fetchWithTimeout('https://ipinfo.io/json', {}, 5000);
+          if (!r2.ok) throw new Error();
+          const j2 = await r2.json();
+          return { ip: j2.ip || null, source: 'ipinfo.io' };
+        } catch {
+          return { ip: null, source: 'failed' };
+        }
+      }
+    }
+
+    async function getIPv6() {
+      try {
+        const r = await fetchWithTimeout('https://api64.ipify.org?format=json', {}, 5000);
+        if (!r.ok) throw new Error();
+        const j = await r.json();
+        return { ip6: j.ip || null, source: 'api64.ipify.org' };
+      } catch {
+        return { ip6: null, source: 'none' };
+      }
+    }
+
+    async function getGeo(ip) {
+      const base = ip ? `https://ipapi.co/${encodeURIComponent(ip)}/json/` : 'https://ipapi.co/json/';
+      try {
+        const r = await fetchWithTimeout(base, {}, 6000);
+        if (!r.ok) throw new Error();
+        const j = await r.json();
+        return { ok: true, data: j, source: 'ipapi.co' };
+      } catch {
+        try {
+          const r2 = await fetchWithTimeout('https://ipinfo.io/json', {}, 6000);
+          if (!r2.ok) throw new Error();
+          const j2 = await r2.json();
+          return { ok: true, data: j2, source: 'ipinfo.io' };
+        } catch {
+          return { ok: false };
+        }
+      }
+    }
+
+    async function updateAll() {
+      ipEl.textContent = 'checking…';
+      geoEl.textContent = 'checking…';
+      rawEl.textContent = '';
+
+      const [v4, v6] = await Promise.all([getIPv4(), getIPv6()]);
+      ipEl.textContent = v4.ip || 'unavailable';
+      ipSourceEl.textContent = 'source: ' + v4.source;
+
+      ip6El.textContent = v6.ip6 || '—';
+      ip6SourceEl.textContent = 'source: ' + v6.source;
+
+      const ipToLookup = v4.ip || v6.ip6;
+      const geo = await getGeo(ipToLookup);
+      if (geo.ok) {
+        const d = geo.data;
+        topGeoEl.innerHTML = `<b>City:</b> ${d.city || '—'}<br><b>Region:</b> ${d.region || '—'}<br><b>Country:</b> ${d.country_name || d.country || '—'}`;
+        const lines = [];
+        if (d.latitude && d.longitude) lines.push('Lat/Lon: ' + d.latitude + ', ' + d.longitude);
+        if (d.org) lines.push('Org/ISP: ' + d.org);
+        if (d.postal) lines.push('Postal: ' + d.postal);
+        if (d.timezone) lines.push('Timezone: ' + d.timezone);
+        geoEl.textContent = lines.join('\n') || '—';
+        rawEl.textContent = JSON.stringify(d, null, 2);
+      } else {
+        geoEl.textContent = 'Geolocation unavailable';
+      }
+    }
+
+    toggleRaw.addEventListener('click', () => {
+      if (rawBox.style.display === 'none') {
+        rawBox.style.display = 'block';
+        toggleRaw.textContent = 'Hide Raw Data';
+      } else {
+        rawBox.style.display = 'none';
+        toggleRaw.textContent = 'Show Raw Data';
+      }
+    });
+
+    toggleIPv4.addEventListener('click', () => {
+      if (ipv4Section.style.display === 'none') {
+        ipv4Section.style.display = 'block';
+        toggleIPv4.textContent = 'Hide IPv4';
+      } else {
+        ipv4Section.style.display = 'none';
+        toggleIPv4.textContent = 'Show IPv4';
+      }
+    });
+
+    toggleIPv6.addEventListener('click', () => {
+      if (ipv6Section.style.display === 'none') {
+        ipv6Section.style.display = 'block';
+        toggleIPv6.textContent = 'Hide IPv6';
+      } else {
+        ipv6Section.style.display = 'none';
+        toggleIPv6.textContent = 'Show IPv6';
+      }
+    });
+
+    copyIPv4.addEventListener('click', () => {
+      navigator.clipboard.writeText(ipEl.textContent.trim());
+      copyIPv4.textContent = 'Copied';
+      setTimeout(() => (copyIPv4.textContent = 'Copy'), 1500);
+    });
+    copyIPv6.addEventListener('click', () => {
+      navigator.clipboard.writeText(ip6El.textContent.trim());
+      copyIPv6.textContent = 'Copied';
+      setTimeout(() => (copyIPv6.textContent = 'Copy'), 1500);
+    });
+
+    btn.addEventListener('click', async () => {
+  // Loading state
+  btn.disabled = true;
+  btn.textContent = 'Refreshing…';
+  btn.style.opacity = '0.7';
+  btn.style.background = '#848484';   // use hover gray tone while refreshing
+  btn.style.color = '#000000';
+  btn.style.cursor = 'wait';
+  btn.style.transform = 'translateX(-50%) scale(1)';
+
+  // Run refresh
+  await updateAll();
+
+  // Restore normal state
+  btn.disabled = false;
+  btn.textContent = 'Refresh Now';
+  btn.style.opacity = '1';
+  btn.style.background = '#d96f13';   // back to normal orange
+  btn.style.color = '#000000';
+  btn.style.cursor = 'pointer';
+  btn.blur(); // remove hover/focus effect
+});
+    updateAll();
+  </script>
+  
+</body>
+</html>
