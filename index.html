@@ -3,398 +3,332 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>𝙸𝙿 𝙵𝚒𝚗𝚍𝚎𝚛 | Accurate IP Finder</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/25/25694.png" type="image/png">
+  <title>IP Intelligence | Pro</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     :root {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color: #111;
-      background: #f4f6fb;
+      --accent: #ff8c00;
+      --accent-soft: rgba(255, 140, 0, 0.1);
+      --bg: #f4f7fa;
+      --card: #ffffff;
+      --text-main: #1a1a1b;
+      --text-muted: #65676b;
+      --border: #edf2f7;
     }
+
+    * { box-sizing: border-box; transition: all 0.2s ease; }
+
     body {
       margin: 0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 10px 120px;
-    }
-    .container {
-      width: min(720px, 95vw);
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      align-items: center;
+      padding-bottom: 100px;
     }
 
-    /* --- Header --- */
+    /* --- Refined Header --- */
     #site-header {
-      text-align: center;
-      background: #fff;
-      border-radius: 0;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-      padding: 16px;
-    }
-    #site-header h1 { margin: 0; font-size: 26px; font-weight: 700; }
-    #site-header h2 { margin: 6px 0 0; font-size: 15px; color: #555; }
-
-    /* --- Card --- */
-    .card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 0;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-    }
-    .muted { color: #555; font-size: 13px; margin-bottom: 10px; }
-
-    .box {
-      background: #f8fafc;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       padding: 12px;
-      border-radius: 0;
-      margin-top: 10px;
-      border: 1px solid #ddd;
+      width: 100%;
+      text-align: center;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
     }
-    .big { font-weight: 700; font-size: 20px; }
+    #site-header h1 { margin: 0; font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
 
-    /* --- IPv4 red pulsing dot --- */
-    .ipv4-title {
+    .container {
+      width: min(650px, 95vw);
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    /* --- Smart Cards --- */
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .section-title {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-weight: 600;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+      text-transform: uppercase;
     }
-    .dot {
-      position: relative;
+
+    /* --- Live Pulse Indicator --- */
+    .status-dot {
       width: 10px;
       height: 10px;
-      background:green;
       border-radius: 50%;
+      background: #ccc;
+      position: relative;
     }
-    .dot::before,
-    .dot::after {
-      content: "";
+    .active-pulse::after {
+      content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
+      inset: 0;
       border-radius: 50%;
-      background: rgba(0, 255, 0, 0.4);
-      transform: translate(-50%, -50%) scale(1);
-      animation: pulse 2.4s infinite;
+      background: inherit;
+      animation: ripple 1.5s infinite;
     }
-    .dot::after {
-      animation-delay: 0.6s;
-    }
-    @keyframes pulse {
-      0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.8;
-      }
-      70% {
-        transform: translate(-50%, -50%) scale(3.4);
-        opacity: 0;
-      }
-      100% {
-        opacity: 0;
-      }
+    @keyframes ripple {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(3.5); opacity: 0; }
     }
 
-    /* --- IPv6 scroll and copy --- */
-    #ip-display,
-    #ip6-display {
-      overflow-x: auto;
-      white-space: nowrap;
-      background: #eef2f7;
-      padding: 8px;
-      font-family: monospace;
-      user-select: all;
-      border-radius: 0;
+    /* --- IP Box --- */
+    .ip-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .ip-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .ip-value { font-family: monospace; font-size: 16px; font-weight: 700; color: var(--accent); word-break: break-all; }
+
+    /* --- Geo Rows --- */
+    .geo-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 5px;
+      border-bottom: 1px solid var(--border);
+    }
+    .geo-row:last-child { border-bottom: none; }
+    .geo-icon { width: 30px; color: var(--accent); text-align: center; }
+    .geo-label { flex: 1; font-weight: 500; color: var(--text-muted); }
+    .geo-data { font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+    /* --- Flag Image --- */
+    #country-flag {
+      width: 24px;
+      height: 16px;
+      object-fit: cover;
+      border-radius: 2px;
+      display: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
 
-    .copy-btn {
-      background: none;
-      border: 1px solid #555;
-      color: #111;
-      border-radius: 0;
-      padding: 4px 8px;
-      font-size: 13px;
-      margin-left: 8px;
-      cursor: pointer;
-      transition: 0.2s;
+    /* --- UI Intelligence: Shimmer --- */
+    .shimmer {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer-ani 1.5s infinite;
+      color: transparent !important;
+      border-radius: 4px;
     }
-    .copy-btn:hover { background: #f3f3f3; }
-
-    /* --- Location --- */
-    #top-geo {
-      text-align: center;
-      font-weight: 600;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-    pre { white-space: pre-wrap; word-break: break-word; font-size: 13px; }
+    @keyframes shimmer-ani { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
     /* --- Buttons --- */
-    button { cursor: pointer; border: none; }
-    #refresh {
+    .btn-copy {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 5px;
+    }
+    .btn-copy:hover { color: var(--accent); }
+
+    #fab-refresh {
       position: fixed;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 10px 20px;
-      background:#d96f13;
-      color: #000000;
-      border-radius: 0;
-      font-weight: 600;
-      font-size: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: all 0.25s ease;
-    }
-    #refresh:hover { background: #848484; color: #000000; transform: translateX(-50%) scale(1.05); }
-
-    .toggle-ip {
-      margin-top: 10px;
-      background: #f0f0f0;
-      border: 1px solid #aaa;
-      padding: 6px 10px;
-      border-radius: 0;
-      font-weight: 600;
-    }
-
-    #toggleRaw {
-      margin-top: 10px;
-      padding: 6px 10px;
-      border-radius: 0;
-      border: 1px solid #999;
-      background: #f8f8f8;
-    }
-
-    @media (max-width: 600px) {
-      #site-header h1 { font-size: 22px; }
-      .big { font-size: 18px; }
+      bottom: 30px;
+      right: 30px;
+      width: 55px;
+      height: 55px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(255, 140, 0, 0.3);
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
+
+  <header id="site-header">
+    <h1><i class="fa-solid fa-globe" style="margin-right:8px; color:var(--accent)"></i> IP Address</h1>
+  </header>
+
   <div class="container">
+    
+    <div class="card">
+      <div class="section-title">
+        <div id="mainStatus" class="status-dot"></div>
+        Connection Details
+      </div>
+      
+      <div class="ip-row">
+        <div style="flex:1">
+          <div class="ip-label">IPv4 Address</div>
+          <div id="v4-val" class="ip-value">detecting...</div>
+        </div>
+        <button class="btn-copy" onclick="copy('v4-val')"><i class="fa-regular fa-copy"></i></button>
+      </div>
 
-    <!-- Header -->
-    <div id="site-header">
-      <h1>𝙸𝙿 𝙵𝚒𝚗𝚍𝚎𝚛</h1>
-      <h2>Accurate ɪᴘ & Geo ꜰɪɴᴅᴇʀ</h2>
+      <div class="ip-row">
+        <div style="flex:1">
+          <div class="ip-label">IPv6 Address</div>
+          <div id="v6-val" class="ip-value">searching...</div>
+        </div>
+        <button class="btn-copy" onclick="copy('v6-val')"><i class="fa-regular fa-copy"></i></button>
+      </div>
     </div>
 
-    <!-- Main Card -->
-    <div class="card" role="region" aria-label="IP Finder">
-      <div class="muted">Uses multiple APIs to verify and provide details. Detects only public IP.</div>
-
-      <!-- IPv4 Section -->
-      <button id="toggleIPv4" class="toggle-ip">Show IPv4</button>
-      <div id="ipv4-section" class="box" style="display:none;">
-        <div class="ipv4-title"><div class="dot"></div>Detected IPv4</div>
-        <div style="display:flex; align-items:center;">
-          <div id="ip-display" class="big" style="flex:1;">—</div>
-          <button class="copy-btn" id="copyIPv4">Copy</button>
+    <div class="card">
+      <div class="section-title"><i class="fa-solid fa-location-crosshairs"></i> Geo Intelligence</div>
+      
+      <div class="geo-row">
+        <i class="fa-solid fa-flag geo-icon"></i>
+        <span class="geo-label">Country</span>
+        <div class="geo-data">
+          <span id="res-country">Loading...</span>
+          <img id="country-flag" src="" alt="flag">
         </div>
-        <div id="ip-source" class="muted">source: —</div>
       </div>
 
-      <!-- IPv6 Section -->
-      <button id="toggleIPv6" class="toggle-ip">Show IPv6</button>
-      <div id="ipv6-section" class="box" style="display:none;">
-        <div><b>IPv6</b></div>
-        <div style="display:flex; align-items:center;">
-          <div id="ip6-display" class="big" style="flex:1;">—</div>
-          <button class="copy-btn" id="copyIPv6">Copy</button>
-        </div>
-        <div id="ip6-source" class="muted">source: —</div>
+      <div class="geo-row">
+        <i class="fa-solid fa-server geo-icon"></i>
+        <span class="geo-label">ISP Provider</span>
+        <span id="res-isp" class="geo-data">Loading...</span>
       </div>
 
-      <!-- Location -->
-      <div id="location-section" class="box">
-        <div style="font-weight:700;margin-bottom:8px;">Location Details</div>
-        <div id="top-geo"><b>City:</b> — <br><b>Region:</b> — <br><b>Country:</b> —</div>
-        <pre id="geo" style="margin-top:8px;">—</pre>
+      <div class="geo-row">
+        <i class="fa-solid fa-city geo-icon"></i>
+        <span class="geo-label">City / Region</span>
+        <span id="res-city" class="geo-data">Loading...</span>
       </div>
-
-      <button id="toggleRaw">Show Raw Data</button>
-      <div id="rawBox" class="box" style="display:none;margin-top:12px;">
-        <div><b>Raw responses (for debugging)</b></div>
-        <pre id="raw">—</pre>
-      </div>
-
-      <div class="muted">APIs: api.ipify.org, ipapi.co, ipinfo.io</div>
     </div>
+
+    <button onclick="toggleDebug()" style="background:none; border:none; color:#bbb; font-size:10px; width:100%; cursor:pointer; margin-top:10px;">SHOW RAW JSON</button>
+    <pre id="raw-json" style="display:none; background:#222; color:#0f0; padding:15px; border-radius:10px; font-size:11px; margin-top:10px; overflow-x:auto;"></pre>
+
   </div>
 
-  <button id="refresh">Refresh Now</button>
+  <button id="fab-refresh"><i class="fa-solid fa-sync" id="sync-icon"></i></button>
 
-  <script>
-    const ipEl = document.getElementById('ip-display');
-    const ipSourceEl = document.getElementById('ip-source');
-    const ip6El = document.getElementById('ip6-display');
-    const ip6SourceEl = document.getElementById('ip6-source');
-    const geoEl = document.getElementById('geo');
-    const topGeoEl = document.getElementById('top-geo');
-    const rawEl = document.getElementById('raw');
-    const rawBox = document.getElementById('rawBox');
-    const btn = document.getElementById('refresh');
-    const toggleRaw = document.getElementById('toggleRaw');
-    const toggleIPv4 = document.getElementById('toggleIPv4');
-    const toggleIPv6 = document.getElementById('toggleIPv6');
-    const ipv4Section = document.getElementById('ipv4-section');
-    const ipv6Section = document.getElementById('ipv6-section');
-    const copyIPv4 = document.getElementById('copyIPv4');
-    const copyIPv6 = document.getElementById('copyIPv6');
+<script>
+/**
+ * UI Intelligence & Stability Module
+ */
+const App = {
+  isBusy: false,
+  controller: null,
 
-    async function fetchWithTimeout(url, opts = {}, ms = 6000) {
-      return new Promise((res, rej) => {
-        const timer = setTimeout(() => rej(new Error('timeout')), ms);
-        fetch(url, opts).then(r => { clearTimeout(timer); res(r); }).catch(e => { clearTimeout(timer); rej(e); });
-      });
+  async fetch() {
+    // 1. Handle race conditions
+    if (this.isBusy) this.controller.abort();
+    this.controller = new AbortController();
+    this.isBusy = true;
+
+    // 2. Intelligence: Set UI to Shimmer/Loading state
+    this.toggleLoading(true);
+
+    try {
+      // 3. Fast Parallel IP Detection
+      const [v4Res, v6Res] = await Promise.allSettled([
+        fetch('https://api.ipify.org?format=json', { signal: this.controller.signal }).then(r => r.json()),
+        fetch('https://api64.ipify.org?format=json', { signal: this.controller.signal }).then(r => r.json())
+      ]);
+
+      const v4 = v4Res.status === 'fulfilled' ? v4Res.value.ip : 'Unavailable';
+      const v6 = v6Res.status === 'fulfilled' ? v6Res.value.ip : 'Not Active';
+
+      document.getElementById('v4-val').innerText = v4;
+      document.getElementById('v6-val').innerText = v6;
+
+      // 4. Intelligence: Geo-lookup
+      // We use the detected v4 for higher accuracy in geo-mapping
+      const geo = await fetch(`https://ipapi.co/${v4 !== 'Unavailable' ? v4 : ''}/json/`, { 
+        signal: this.controller.signal 
+      }).then(r => r.json());
+
+      this.render(geo);
+
+    } catch (e) {
+      if (e.name !== 'AbortError') console.error("Network error");
+    } finally {
+      this.isBusy = false;
+      this.toggleLoading(false);
+    }
+  },
+
+  toggleLoading(loading) {
+    const icon = document.getElementById('sync-icon');
+    const fields = ['v4-val', 'v6-val', 'res-country', 'res-isp', 'res-city'];
+    
+    if (loading) {
+      icon.classList.add('fa-spin');
+      fields.forEach(f => document.getElementById(f).classList.add('shimmer'));
+      document.getElementById('country-flag').style.display = 'none';
+    } else {
+      icon.classList.remove('fa-spin');
+      fields.forEach(f => document.getElementById(f).classList.remove('shimmer'));
+    }
+  },
+
+  render(data) {
+    // Fill text
+    document.getElementById('res-country').innerText = data.country_name || 'Global';
+    document.getElementById('res-isp').innerText = data.org || 'Unknown Provider';
+    document.getElementById('res-city').innerText = `${data.city || '—'}, ${data.region_code || ''}`;
+    document.getElementById('raw-json').innerText = JSON.stringify(data, null, 2);
+
+    // Flag Logic
+    if (data.country_code) {
+      const flag = document.getElementById('country-flag');
+      flag.src = `https://flagcdn.com/w40/${data.country_code.toLowerCase()}.png`;
+      flag.onload = () => flag.style.display = 'inline-block';
     }
 
-    async function getIPv4() {
-      try {
-        const r = await fetchWithTimeout('https://api.ipify.org?format=json', {}, 5000);
-        if (!r.ok) throw new Error();
-        const j = await r.json();
-        return { ip: j.ip, source: 'api.ipify.org' };
-      } catch {
-        try {
-          const r2 = await fetchWithTimeout('https://ipinfo.io/json', {}, 5000);
-          if (!r2.ok) throw new Error();
-          const j2 = await r2.json();
-          return { ip: j2.ip || null, source: 'ipinfo.io' };
-        } catch {
-          return { ip: null, source: 'failed' };
-        }
-      }
-    }
+    // Security Dot Logic (Green if VPN/Cloud, Orange if Direct)
+    const dot = document.getElementById('mainStatus');
+    const isMasked = /vpn|proxy|hosting|cloud/i.test(data.org || '');
+    dot.style.background = isMasked ? '#00d166' : '#ff8c00';
+    dot.classList.add('active-pulse');
+  }
+};
 
-    async function getIPv6() {
-      try {
-        const r = await fetchWithTimeout('https://api64.ipify.org?format=json', {}, 5000);
-        if (!r.ok) throw new Error();
-        const j = await r.json();
-        return { ip6: j.ip || null, source: 'api64.ipify.org' };
-      } catch {
-        return { ip6: null, source: 'none' };
-      }
-    }
+// --- Utilities ---
+function copy(id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text);
+  const icon = event.currentTarget.querySelector('i');
+  icon.className = 'fa-solid fa-check';
+  setTimeout(() => icon.className = 'fa-regular fa-copy', 1500);
+}
 
-    async function getGeo(ip) {
-      const base = ip ? `https://ipapi.co/${encodeURIComponent(ip)}/json/` : 'https://ipapi.co/json/';
-      try {
-        const r = await fetchWithTimeout(base, {}, 6000);
-        if (!r.ok) throw new Error();
-        const j = await r.json();
-        return { ok: true, data: j, source: 'ipapi.co' };
-      } catch {
-        try {
-          const r2 = await fetchWithTimeout('https://ipinfo.io/json', {}, 6000);
-          if (!r2.ok) throw new Error();
-          const j2 = await r2.json();
-          return { ok: true, data: j2, source: 'ipinfo.io' };
-        } catch {
-          return { ok: false };
-        }
-      }
-    }
+function toggleDebug() {
+  const pre = document.getElementById('raw-json');
+  pre.style.display = pre.style.display === 'none' ? 'block' : 'none';
+}
 
-    async function updateAll() {
-      ipEl.textContent = 'checking…';
-      geoEl.textContent = 'checking…';
-      rawEl.textContent = '';
-
-      const [v4, v6] = await Promise.all([getIPv4(), getIPv6()]);
-      ipEl.textContent = v4.ip || 'unavailable';
-      ipSourceEl.textContent = 'source: ' + v4.source;
-
-      ip6El.textContent = v6.ip6 || '—';
-      ip6SourceEl.textContent = 'source: ' + v6.source;
-
-      const ipToLookup = v4.ip || v6.ip6;
-      const geo = await getGeo(ipToLookup);
-      if (geo.ok) {
-        const d = geo.data;
-        topGeoEl.innerHTML = `<b>City:</b> ${d.city || '—'}<br><b>Region:</b> ${d.region || '—'}<br><b>Country:</b> ${d.country_name || d.country || '—'}`;
-        const lines = [];
-        if (d.latitude && d.longitude) lines.push('Lat/Lon: ' + d.latitude + ', ' + d.longitude);
-        if (d.org) lines.push('Org/ISP: ' + d.org);
-        if (d.postal) lines.push('Postal: ' + d.postal);
-        if (d.timezone) lines.push('Timezone: ' + d.timezone);
-        geoEl.textContent = lines.join('\n') || '—';
-        rawEl.textContent = JSON.stringify(d, null, 2);
-      } else {
-        geoEl.textContent = 'Geolocation unavailable';
-      }
-    }
-
-    toggleRaw.addEventListener('click', () => {
-      if (rawBox.style.display === 'none') {
-        rawBox.style.display = 'block';
-        toggleRaw.textContent = 'Hide Raw Data';
-      } else {
-        rawBox.style.display = 'none';
-        toggleRaw.textContent = 'Show Raw Data';
-      }
-    });
-
-    toggleIPv4.addEventListener('click', () => {
-      if (ipv4Section.style.display === 'none') {
-        ipv4Section.style.display = 'block';
-        toggleIPv4.textContent = 'Hide IPv4';
-      } else {
-        ipv4Section.style.display = 'none';
-        toggleIPv4.textContent = 'Show IPv4';
-      }
-    });
-
-    toggleIPv6.addEventListener('click', () => {
-      if (ipv6Section.style.display === 'none') {
-        ipv6Section.style.display = 'block';
-        toggleIPv6.textContent = 'Hide IPv6';
-      } else {
-        ipv6Section.style.display = 'none';
-        toggleIPv6.textContent = 'Show IPv6';
-      }
-    });
-
-    copyIPv4.addEventListener('click', () => {
-      navigator.clipboard.writeText(ipEl.textContent.trim());
-      copyIPv4.textContent = 'Copied';
-      setTimeout(() => (copyIPv4.textContent = 'Copy'), 1500);
-    });
-    copyIPv6.addEventListener('click', () => {
-      navigator.clipboard.writeText(ip6El.textContent.trim());
-      copyIPv6.textContent = 'Copied';
-      setTimeout(() => (copyIPv6.textContent = 'Copy'), 1500);
-    });
-
-    btn.addEventListener('click', async () => {
-  // Loading state
-  btn.disabled = true;
-  btn.textContent = 'Refreshing…';
-  btn.style.opacity = '0.7';
-  btn.style.background = '#848484';   // use hover gray tone while refreshing
-  btn.style.color = '#000000';
-  btn.style.cursor = 'wait';
-  btn.style.transform = 'translateX(-50%) scale(1)';
-
-  // Run refresh
-  await updateAll();
-
-  // Restore normal state
-  btn.disabled = false;
-  btn.textContent = 'Refresh Now';
-  btn.style.opacity = '1';
-  btn.style.background = '#d96f13';   // back to normal orange
-  btn.style.color = '#000000';
-  btn.style.cursor = 'pointer';
-  btn.blur(); // remove hover/focus effect
-});
-    updateAll();
-  </script>
-  
+// --- Init ---
+document.getElementById('fab-refresh').onclick = () => App.fetch();
+window.onload = () => App.fetch();
+</script>
 </body>
 </html>
