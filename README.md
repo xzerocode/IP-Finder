@@ -17,7 +17,7 @@
 --
 Find your public IPv4 / IPv6 and location info using free APIs.
 
-** Features**
+**Features**
 --
 •Detects IPv4 & IPv6
 
@@ -30,7 +30,7 @@ Find your public IPv4 / IPv6 and location info using free APIs.
 •Clean responsive design
 
 
-**⚠️ Warning **
+**⚠️ Warning**
 
 Uses free APIs: ipify.org and ipapi.co
 
