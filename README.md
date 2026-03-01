@@ -8,7 +8,7 @@
 **http://bit.ly/ipfindz**
 --
 
-# **"User-made for users."**
+**"User-made for users."**
 -
 <h1><b>♻️ Simple...</b></h1>
 <h1><b>⚡ Fast...</b></h1>
@@ -17,7 +17,7 @@
 --
 Find your public IPv4 / IPv6 and location info using free APIs.
 
-# Features
+** Features**
 --
 •Detects IPv4 & IPv6
 
@@ -29,5 +29,22 @@ Find your public IPv4 / IPv6 and location info using free APIs.
 
 •Clean responsive design
 
-# Usage
+
+**⚠️ Warning **
+
+Uses free APIs: ipify.org and ipapi.co
+
+Limited requests — rapid refreshes may trigger Network Error
+
+IPv6 may be unavailable on some networks
+
+Use HTTPS hosting to avoid CORS issues
+
+Add an API key or cooldown for better reliability
+
+
+
+---
+
+**Usage**
 Open index.html, click Show IPv4 / IPv6, then Refresh Now.
